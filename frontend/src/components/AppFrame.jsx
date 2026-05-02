@@ -31,6 +31,17 @@ function AppFrame({ title, subtitle, children }) {
     };
   }, []);
 
+  async function handleCreateProject() {
+    const name = window.prompt("Enter new project name:");
+    if (!name?.trim()) return;
+    try {
+      const response = await api.post("/projects/", { name: name.trim(), description: "" });
+      setProjects((prev) => [...prev, response.data]);
+    } catch (error) {
+      alert("Failed to create project");
+    }
+  }
+
   return (
     <div className="min-h-screen px-4 py-4 sm:px-6 lg:px-10">
       <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-[260px_minmax(0,1fr)]">
@@ -60,11 +71,17 @@ function AppFrame({ title, subtitle, children }) {
               </NavLink>
             ))}
 
-            {projects.length > 0 && (
-              <div className="pt-4 pb-2">
-                <p className="px-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Projects</p>
-              </div>
-            )}
+            <div className="flex items-center justify-between px-4 pt-4 pb-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Projects</p>
+              <button 
+                type="button" 
+                onClick={handleCreateProject}
+                className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-800 text-xs text-slate-300 hover:bg-slate-700 hover:text-white"
+                title="Create Project"
+              >
+                +
+              </button>
+            </div>
             {projects.map((project) => (
               <NavLink
                 key={project.id}
